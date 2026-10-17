@@ -12,6 +12,7 @@ Vitality Hub is a full-stack wellness platform for college project use. It combi
 - Challenge, reminder, and achievement modules
 - Wellness resource library and chatbot assistant
 - Saved yoga, breathing, mindfulness, and stretching preferences with time-aware recommendations
+- Illustrated yoga, pranayama, and meditation guides with possible benefits and gentle instructions
 - Admin summary dashboard for monitoring participation
 
 ## Tech stack
@@ -99,3 +100,5 @@ pytest -q
 Personalization is rules-based and uses only a signed-in user's selected wellness interests and available time. Preferences are stored per user in the `wellness_preferences` table; recommendations are drawn from the existing wellness activity catalog and include the reason for each match.
 
 The asana catalog is seeded idempotently at backend startup into its own table. It currently provides 25 beginner-oriented poses through the public `GET /api/asanas` search/filter endpoint and `GET /api/asanas/{id}` detail endpoint.
+
+The `/yoga` page includes 12 featured asanas, 8 breathing practices, and 8 meditation ideas with local SVG illustrations. Practice video links open YouTube search results for the named activity; specific videos are not curated or endorsed by the application.
