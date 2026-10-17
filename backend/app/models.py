@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -27,6 +27,7 @@ class User(Base):
     reminders = relationship("Reminder", back_populates="user", cascade="all, delete-orphan")
     survey_responses = relationship("SurveyResponse", back_populates="user", cascade="all, delete-orphan")
     user_achievements = relationship("UserAchievement", back_populates="user", cascade="all, delete-orphan")
+    wellness_preferences = relationship("WellnessPreference", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
 
 class HealthProfile(Base):
@@ -123,6 +124,36 @@ class WellnessActivity(Base):
     duration = Column(String, nullable=False)
     instructions = Column(Text, nullable=False)
     safety_note = Column(Text, nullable=True)
+
+
+class Asana(Base):
+    __tablename__ = "asanas"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
+    sanskrit_name = Column(String, nullable=True)
+    category = Column(String, nullable=False)
+    difficulty = Column(String, nullable=False)
+    duration_minutes = Column(Integer, nullable=False)
+    equipment = Column(String, nullable=True)
+    description = Column(Text, nullable=False)
+    instructions = Column(Text, nullable=False)
+    breathing = Column(Text, nullable=False)
+    common_mistakes = Column(Text, nullable=False)
+    modification = Column(Text, nullable=False)
+    safety_note = Column(Text, nullable=False)
+
+
+class WellnessPreference(Base):
+    __tablename__ = "wellness_preferences"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
+    interests = Column(JSON, nullable=False, default=list)
+    available_minutes = Column(Integer, nullable=False, default=10)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = relationship("User", back_populates="wellness_preferences")
 
 
 class FoodItem(Base):

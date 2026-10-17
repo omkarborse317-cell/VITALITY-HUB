@@ -910,6 +910,136 @@ button { cursor: pointer; }
 .plate-section.grains { background: #f4e5d0; inset: 0 0 50% 50%; }
 .plate-section.protein { background: #e9e1f7; inset: 50% 0 0 50%; }
 
+.wellness-plan-link {
+  display: inline-flex;
+  margin-top: 16px;
+}
+
+.asana-library-page { gap: 18px; }
+
+.asana-filters {
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.asana-filters label {
+  display: grid;
+  flex: 1 1 200px;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.asana-filters input, .asana-filters select {
+  width: 100%;
+  max-width: none;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--white);
+}
+
+.asana-library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 16px;
+}
+
+.asana-library-card h3 { margin-bottom: 4px; }
+.asana-card-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.asana-card-meta .mini-pill { margin-bottom: 4px; }
+.asana-sanskrit { font-style: italic; color: var(--deep-green) !important; }
+.asana-library-card details { margin-top: 14px; }
+.asana-library-card summary { cursor: pointer; font-weight: 600; }
+
+.asana-guidance {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.35fr) 1fr;
+  gap: 8px 12px;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.asana-guidance dt { font-weight: 600; }
+.asana-guidance dd { margin: 0; color: var(--muted); }
+
+.preference-page, .recommendations-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.preference-form {
+  display: grid;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.preference-options {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--white);
+}
+
+.preference-options legend {
+  padding: 0 8px;
+  font-weight: 700;
+}
+
+.preference-options p { margin: 0; }
+
+.preference-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.preference-option input { accent-color: var(--forest); }
+
+.available-time-field {
+  display: grid;
+  gap: 8px;
+  max-width: 360px;
+  font-weight: 600;
+}
+
+.available-time-field select {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--white);
+}
+
+.preference-actions, .recommendation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.recommendation-toolbar { margin: 18px 0; }
+.recommendation-toolbar p { margin: 0; }
+
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.recommendation-card h3 { margin: 14px 0 8px; }
+.recommendation-card details { margin-top: 14px; }
+.recommendation-card summary { cursor: pointer; font-weight: 600; }
+.recommendation-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  color: var(--deep-green);
+  font-size: 0.92rem;
+}
+
 .site-footer {
   display: flex;
   align-items: center;
@@ -941,6 +1071,7 @@ button { cursor: pointer; }
   .row-fields { display: grid; }
   .stats-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
   .site-footer { flex-direction: column; align-items: flex-start; }
+  .recommendation-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
@@ -948,5 +1079,6 @@ button { cursor: pointer; }
   .stats-grid { grid-template-columns: 1fr; }
   .page-body { padding-top: 18px; }
   .toolbar-row, .chat-input-row { flex-direction: column; }
+  .asana-guidance { grid-template-columns: 1fr; }
   .goal-item { flex-direction: column; align-items: flex-start; }
 }

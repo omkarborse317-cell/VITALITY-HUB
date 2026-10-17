@@ -173,3 +173,72 @@ def test_survey_and_resources(client):
     resources = client.get("/api/resources")
     assert resources.status_code == 200, resources.text
     assert len(resources.json()) >= 1
+
+
+def test_wellness_preferences_and_personalized_recommendations(client):
+    assert client.get("/api/recommendations").status_code == 401
+    registration = client.post(
+        "/api/auth/register",
+        json={
+            "name": "Yoga Learner",
+            "email": "yoga-learner@example.com",
+            "password": "Secret123",
+            "confirm_password": "Secret123",
+        },
+    )
+    assert registration.status_code == 200, registration.text
+    headers = {"Authorization": f"Bearer {registration.json()['access_token']}"}
+
+    assert client.get("/api/preferences/wellness", headers=headers).json() is None
+    saved = client.put(
+        "/api/preferences/wellness",
+        json={"interests": ["yoga"], "available_minutes": 3},
+        headers=headers,
+    )
+    assert saved.status_code == 200, saved.text
+    assert saved.json() == {"interests": ["yoga"], "available_minutes": 3}
+
+    recommendations = client.get("/api/recommendations", headers=headers)
+    assert recommendations.status_code == 200, recommendations.text
+    body = recommendations.json()
+    assert body["personalized"] is True
+    assert body["items"]
+    assert all(item["category"] == "Yoga" for item in body["items"])
+    assert all("3-minute time window" in item["reason"] for item in body["items"])
+    assert all(item["name"] != "Guided Relaxation" for item in body["items"])
+
+    other_registration = client.post(
+        "/api/auth/register",
+        json={
+            "name": "Another Learner",
+            "email": "another-learner@example.com",
+            "password": "Secret123",
+            "confirm_password": "Secret123",
+        },
+    )
+    other_headers = {"Authorization": f"Bearer {other_registration.json()['access_token']}"}
+    assert client.get("/api/preferences/wellness", headers=other_headers).json() is None
+
+
+def test_asana_library_search_filters_and_details(client):
+    library = client.get("/api/asanas")
+    assert library.status_code == 200, library.text
+    assert len(library.json()) == 25
+
+    search = client.get("/api/asanas", params={"q": "Tadasana"})
+    assert search.status_code == 200, search.text
+    assert [item["name"] for item in search.json()] == ["Mountain Pose"]
+
+    balance = client.get("/api/asanas", params={"category": "balance"})
+    assert [item["name"] for item in balance.json()] == ["Tree Pose"]
+
+    short_poses = client.get("/api/asanas", params={"max_duration": 1})
+    assert short_poses.status_code == 200, short_poses.text
+    assert all(item["duration_minutes"] <= 1 for item in short_poses.json())
+
+    tree_pose = next(item for item in library.json() if item["name"] == "Tree Pose")
+    detail = client.get(f"/api/asanas/{tree_pose['id']}")
+    assert detail.status_code == 200, detail.text
+    assert detail.json()["modification"]
+    assert detail.json()["safety_note"]
+    assert client.get("/api/asanas/99999").status_code == 404

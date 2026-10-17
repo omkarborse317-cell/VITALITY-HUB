@@ -13,10 +13,12 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
+from app.asana_catalog import ASANA_CATALOG
 from app.config import get_settings
 from app.database import Base, SessionLocal, engine, get_db
 from app.models import (
     Achievement,
+    Asana,
     AwarenessResource,
     Challenge,
     ChallengeParticipant,
@@ -32,6 +34,7 @@ from app.models import (
     UserAchievement,
     WaterLog,
     WellnessActivity,
+    WellnessPreference,
 )
 from app.schemas import (
     ChatbotRequest,
@@ -52,7 +55,9 @@ from app.schemas import (
     UserRegister,
     WaterLogCreate,
     WaterSettingsUpdate,
+    WellnessPreferenceUpdate,
 )
+from app.recommendations import rank_wellness_activities
 from app.security import create_access_token, hash_password, verify_password
 
 settings = get_settings()
@@ -286,6 +291,11 @@ def seed_default_data(db: Session):
         ]
         for title, description in templates:
             db.add(DailyGoal(user_id=demo_user.id, title=title, description=description, completed=False, goal_date=date.today()))
+
+    existing_asana_names = {name for (name,) in db.query(Asana.name).all()}
+    for asana in ASANA_CATALOG:
+        if asana["name"] not in existing_asana_names:
+            db.add(Asana(**asana))
 
     db.commit()
 
@@ -606,6 +616,108 @@ def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
 @app.get("/api/wellness/activities")
 def get_wellness_activities(db: Session = Depends(get_db)):
     return db.query(WellnessActivity).all()
+
+
+@app.get("/api/asanas")
+def get_asanas(
+    q: str | None = Query(default=None),
+    difficulty: str | None = Query(default=None),
+    category: str | None = Query(default=None),
+    max_duration: int | None = Query(default=None, ge=1, le=120),
+    db: Session = Depends(get_db),
+):
+    query = db.query(Asana)
+    if q:
+        search = f"%{q}%"
+        query = query.filter(
+            (Asana.name.ilike(search))
+            | (Asana.sanskrit_name.ilike(search))
+            | (Asana.description.ilike(search))
+        )
+    if difficulty:
+        query = query.filter(Asana.difficulty.ilike(difficulty))
+    if category:
+        query = query.filter(Asana.category.ilike(category))
+    if max_duration is not None:
+        query = query.filter(Asana.duration_minutes <= max_duration)
+    return query.order_by(Asana.name).all()
+
+
+@app.get("/api/asanas/{asana_id}")
+def get_asana(asana_id: int, db: Session = Depends(get_db)):
+    asana = db.query(Asana).filter(Asana.id == asana_id).first()
+    if not asana:
+        raise HTTPException(status_code=404, detail="Asana not found.")
+    return asana
+
+
+@app.get("/api/preferences/wellness")
+def get_wellness_preferences(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    preference = (
+        db.query(WellnessPreference)
+        .filter(WellnessPreference.user_id == current_user.id)
+        .first()
+    )
+    if not preference:
+        return None
+    return {
+        "interests": preference.interests,
+        "available_minutes": preference.available_minutes,
+    }
+
+
+@app.put("/api/preferences/wellness")
+def save_wellness_preferences(
+    payload: WellnessPreferenceUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    preference = (
+        db.query(WellnessPreference)
+        .filter(WellnessPreference.user_id == current_user.id)
+        .first()
+    )
+    if not preference:
+        preference = WellnessPreference(user_id=current_user.id)
+        db.add(preference)
+
+    preference.interests = list(dict.fromkeys(payload.interests))
+    preference.available_minutes = payload.available_minutes
+    db.commit()
+    db.refresh(preference)
+    return {
+        "interests": preference.interests,
+        "available_minutes": preference.available_minutes,
+    }
+
+
+@app.get("/api/recommendations")
+def get_recommendations(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    preference = (
+        db.query(WellnessPreference)
+        .filter(WellnessPreference.user_id == current_user.id)
+        .first()
+    )
+    activities = db.query(WellnessActivity).order_by(WellnessActivity.id).all()
+    interests = preference.interests if preference else []
+    available_minutes = preference.available_minutes if preference else 10
+    items = rank_wellness_activities(activities, interests, available_minutes)
+
+    return {
+        "personalized": preference is not None,
+        "message": (
+            "Recommendations use your saved interests and available time."
+            if preference
+            else "These are general suggestions. Save your interests and available time to personalize them."
+        ),
+        "items": items,
+    }
 
 
 @app.get("/api/wellness/activities/{activity_id}")

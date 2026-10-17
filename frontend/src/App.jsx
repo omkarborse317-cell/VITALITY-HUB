@@ -115,9 +115,12 @@ function App() {
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="profile" element={<ProtectedRoute user={user}><ProfilePage /> </ProtectedRoute>} />
         <Route path="dashboard" element={<ProtectedRoute user={user}><DashboardPage user={user} /></ProtectedRoute>} />
+        <Route path="onboarding" element={<ProtectedRoute user={user}><WellnessOnboardingPage /></ProtectedRoute>} />
+        <Route path="recommendations" element={<ProtectedRoute user={user}><RecommendationsPage /></ProtectedRoute>} />
         <Route path="exercise" element={<ExercisePage />} />
-        <Route path="yoga" element={<YogaPage />} />
-        <Route path="wellness" element={<YogaPage />} />
+        <Route path="asanas" element={<AsanaLibraryPage />} />
+        <Route path="yoga" element={<YogaPage user={user} />} />
+        <Route path="wellness" element={<YogaPage user={user} />} />
         <Route path="food" element={<FoodPage />} />
         <Route path="plate" element={<PlatePage />} />
         <Route path="water" element={<ProtectedRoute user={user}><WaterPage /></ProtectedRoute>} />
@@ -683,7 +686,120 @@ function ExercisePage() {
   );
 }
 
-function YogaPage() {
+function AsanaLibraryPage() {
+  const [asanas, setAsanas] = useState([]);
+  const [query, setQuery] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [category, setCategory] = useState('');
+  const [maxDuration, setMaxDuration] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadAsanas = async () => {
+      setLoading(true);
+      try {
+        const { data } = await api.get('/asanas', {
+          params: {
+            q: query || undefined,
+            difficulty: difficulty || undefined,
+            category: category || undefined,
+            max_duration: maxDuration || undefined,
+          },
+        });
+        setAsanas(data);
+        setError('');
+      } catch (requestError) {
+        setError(requestError.response?.data?.detail || 'Unable to load the asana library.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadAsanas();
+  }, [query, difficulty, category, maxDuration]);
+
+  return (
+    <div className="section-page asana-library-page">
+      <p className="eyebrow">Explore at your own pace</p>
+      <h2>Yoga asana library</h2>
+      <p className="lead">Beginner-oriented movement education with supported alternatives. Choose only what feels comfortable.</p>
+      <div className="toolbar-row asana-filters">
+        <label>
+          Search poses
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Name, Sanskrit name, or description" />
+        </label>
+        <label>
+          Experience
+          <select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}>
+            <option value="">All levels</option>
+            <option value="beginner">Beginner</option>
+            <option value="beginner-adaptable">Beginner-adaptable</option>
+          </select>
+        </label>
+        <label>
+          Movement type
+          <select value={category} onChange={(event) => setCategory(event.target.value)}>
+            <option value="">All types</option>
+            <option value="standing">Standing</option>
+            <option value="balance">Balance</option>
+            <option value="seated">Seated</option>
+            <option value="kneeling">Kneeling</option>
+            <option value="mobility">Mobility</option>
+            <option value="supine">Lying on the back</option>
+            <option value="prone">Lying on the front</option>
+            <option value="core">Supported strength</option>
+            <option value="relaxation">Relaxation</option>
+          </select>
+        </label>
+        <label>
+          Time available
+          <select value={maxDuration} onChange={(event) => setMaxDuration(event.target.value)}>
+            <option value="">Any duration</option>
+            <option value="1">Up to 1 minute</option>
+            <option value="2">Up to 2 minutes</option>
+            <option value="3">Up to 3 minutes</option>
+            <option value="5">Up to 5 minutes</option>
+          </select>
+        </label>
+      </div>
+      <p className="small-note" role="status">
+        {loading ? 'Loading poses…' : `${asanas.length} pose${asanas.length === 1 ? '' : 's'} found`}
+      </p>
+      {error && <div className="error-box" role="alert">{error}</div>}
+      {!loading && !error && asanas.length === 0 && (
+        <div className="empty-box">No poses match those filters. Try broadening your search.</div>
+      )}
+      <div className="asana-library-grid">
+        {asanas.map((asana) => (
+          <article className="info-card asana-library-card" key={asana.id}>
+            <div className="asana-card-meta">
+              <span className="mini-pill green">{asana.category}</span>
+              <span className="mini-pill">{asana.duration_minutes} min</span>
+            </div>
+            <h3>{asana.name}</h3>
+            {asana.sanskrit_name && <p className="asana-sanskrit">{asana.sanskrit_name}</p>}
+            <p>{asana.description}</p>
+            <p className="small-note">Level: {asana.difficulty.replace('-', ' ')}</p>
+            <details>
+              <summary>Instructions, adaptations, and safety</summary>
+              <dl className="asana-guidance">
+                <dt>How to explore</dt><dd>{asana.instructions}</dd>
+                <dt>Breathing</dt><dd>{asana.breathing}</dd>
+                <dt>Common things to avoid</dt><dd>{asana.common_mistakes}</dd>
+                <dt>Supported option</dt><dd>{asana.modification}</dd>
+                <dt>Equipment</dt><dd>{asana.equipment || 'None required'}</dd>
+                <dt>Safety</dt><dd>{asana.safety_note}</dd>
+              </dl>
+            </details>
+          </article>
+        ))}
+      </div>
+      <p className="small-note">This is general education, not medical advice. Stop if you experience pain, dizziness, or distress.</p>
+    </div>
+  );
+}
+
+function YogaPage({ user }) {
   const [activities, setActivities] = useState([]);
 
   const asanas = [
@@ -714,6 +830,10 @@ function YogaPage() {
         <div>
           <p className="eyebrow">Yoga flow</p>
           <h2>Move gently. Breathe deeply. Restore your balance.</h2>
+          <NavLink className="primary-btn wellness-plan-link" to={user ? '/recommendations' : '/login'}>
+            {user ? 'View my wellness plan' : 'Sign in for a personal plan'}
+          </NavLink>
+          <NavLink className="secondary-btn wellness-plan-link" to="/asanas">Browse the asana library</NavLink>
         </div>
         <div className="yoga-breath-ring">
           <span>Inhale</span>
@@ -803,6 +923,159 @@ function YogaPage() {
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+const wellnessInterestOptions = [
+  { value: 'yoga', label: 'Yoga and gentle movement' },
+  { value: 'breathing', label: 'Breathing practices' },
+  { value: 'mindfulness', label: 'Mindfulness and relaxation' },
+  { value: 'stretching', label: 'Gentle stretching' },
+];
+
+function WellnessOnboardingPage() {
+  const navigate = useNavigate();
+  const [preferences, setPreferences] = useState({ interests: [], available_minutes: 10 });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadPreferences = async () => {
+      try {
+        const { data } = await api.get('/preferences/wellness');
+        if (data) setPreferences(data);
+      } catch (requestError) {
+        setLoadFailed(true);
+        setError(requestError.response?.data?.detail || 'Unable to load your wellness preferences.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPreferences();
+  }, []);
+
+  const toggleInterest = (interest) => {
+    setPreferences((current) => ({
+      ...current,
+      interests: current.interests.includes(interest)
+        ? current.interests.filter((item) => item !== interest)
+        : [...current.interests, interest],
+    }));
+  };
+
+  const savePreferences = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    setError('');
+    try {
+      await api.put('/preferences/wellness', preferences);
+      navigate('/recommendations');
+    } catch (requestError) {
+      setError(requestError.response?.data?.detail || 'Unable to save your preferences. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="section-page preference-page">
+      <p className="eyebrow">A plan that fits your day</p>
+      <h2>Personalize your wellness suggestions</h2>
+      <p className="lead">Choose a few interests and the time you usually have. You can change these preferences whenever you like.</p>
+      {error && <div className="error-box" role="alert">{error}</div>}
+      {loading ? <p role="status">Loading your preferences…</p> : (
+        <form className="preference-form" onSubmit={savePreferences}>
+          <fieldset className="preference-options">
+            <legend>What would you like to explore?</legend>
+            <p className="small-note">Select any interests, or leave them blank to see general suggestions.</p>
+            {wellnessInterestOptions.map(({ value, label }) => (
+              <label key={value} className="preference-option">
+                <input
+                  type="checkbox"
+                  checked={preferences.interests.includes(value)}
+                  onChange={() => toggleInterest(value)}
+                />
+                <span>{label}</span>
+              </label>
+            ))}
+          </fieldset>
+          <label className="available-time-field">
+            How much time do you have for a practice?
+            <select
+              value={preferences.available_minutes}
+              onChange={(event) => setPreferences({
+                ...preferences,
+                available_minutes: Number(event.target.value),
+              })}
+            >
+              {[3, 5, 10, 15, 20, 30, 60].map((minutes) => (
+                <option key={minutes} value={minutes}>{minutes} minutes</option>
+              ))}
+            </select>
+          </label>
+          <p className="small-note">These preferences are saved to your account and used only to sort wellness activities. No health or diagnosis details are requested.</p>
+          <div className="preference-actions">
+            <button className="primary-btn" type="submit" disabled={saving || loadFailed}>
+              {saving ? 'Saving…' : 'Save and view suggestions'}
+            </button>
+            <NavLink className="secondary-btn" to="/recommendations">Skip for now</NavLink>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
+function RecommendationsPage() {
+  const [recommendations, setRecommendations] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadRecommendations = async () => {
+      try {
+        const { data } = await api.get('/recommendations');
+        setRecommendations(data);
+      } catch (requestError) {
+        setError(requestError.response?.data?.detail || 'Unable to load your wellness suggestions.');
+      }
+    };
+    loadRecommendations();
+  }, []);
+
+  return (
+    <div className="section-page recommendations-page">
+      <p className="eyebrow">Your wellness plan</p>
+      <h2>Ideas for your next small step</h2>
+      <div className="recommendation-toolbar">
+        <p className="small-note">{recommendations?.message || 'Loading suggestions…'}</p>
+        <NavLink className="secondary-btn" to="/onboarding">Edit preferences</NavLink>
+      </div>
+      {error && <div className="error-box" role="alert">{error}</div>}
+      {recommendations && recommendations.items.length === 0 && (
+        <div className="empty-box">
+          No activities in the current library match that time and interest combination. Try adjusting your preferences or explore the full library.
+        </div>
+      )}
+      <div className="recommendation-grid">
+        {recommendations?.items.map((item) => (
+          <article className="info-card recommendation-card" key={item.id}>
+            <div className="mini-pill green">{item.category} · {item.duration}</div>
+            <h3>{item.name}</h3>
+            <p>{item.description}</p>
+            <p className="recommendation-reason"><Sparkles size={15} /> {item.reason}</p>
+            <details>
+              <summary>Practice guidance</summary>
+              <p>{item.instructions}</p>
+              {item.safety_note && <p className="small-note">Safety: {item.safety_note}</p>}
+            </details>
+          </article>
+        ))}
+      </div>
+      <p className="small-note">Suggestions are general wellness education, not medical advice. Stop if an activity feels uncomfortable.</p>
+      <NavLink className="text-link" to="/yoga">Explore the full wellness library</NavLink>
     </div>
   );
 }

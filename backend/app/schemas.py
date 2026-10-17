@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
@@ -67,6 +67,14 @@ class HealthProfileBase(BaseModel):
 
 class HealthProfileCreate(HealthProfileBase):
     pass
+
+
+class WellnessPreferenceUpdate(BaseModel):
+    interests: list[Literal["yoga", "breathing", "mindfulness", "stretching"]] = Field(
+        default_factory=list,
+        max_length=4,
+    )
+    available_minutes: int = Field(default=10, ge=1, le=120)
 
 
 class DailyGoalCreate(BaseModel):

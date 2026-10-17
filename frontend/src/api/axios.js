@@ -5,12 +5,14 @@ function getApiBaseUrl() {
     return import.meta.env.VITE_API_URL;
   }
 
+  const apiPort = import.meta.env.VITE_API_PORT || '8000';
   const { hostname, protocol } = window.location;
   if (hostname.endsWith('.app.github.dev')) {
-    return `${protocol}//${hostname.replace('-5173.', '-8000.')}/api`;
+    const apiHostname = hostname.replace(/-\d+\.app\.github\.dev$/, `-${apiPort}.app.github.dev`);
+    return `${protocol}//${apiHostname}/api`;
   }
 
-  return 'http://localhost:8000/api';
+  return `http://localhost:${apiPort}/api`;
 }
 
 const api = axios.create({
