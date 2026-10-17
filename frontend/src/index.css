@@ -917,6 +917,60 @@ button { cursor: pointer; }
 
 .asana-library-page { gap: 18px; }
 
+.practice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 18px;
+}
+
+.practice-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fff, #fbfdfb);
+  box-shadow: 0 12px 30px rgba(36,52,45,0.04);
+}
+
+.practice-image {
+  display: block;
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  background: var(--mint);
+}
+
+.practice-card-body { padding: 17px; }
+.practice-card h4 { margin: 8px 0; font-size: 1.15rem; }
+.practice-card p { color: var(--muted); line-height: 1.55; }
+.practice-card p strong { color: var(--deep-green); }
+.practice-card details { margin: 12px 0; }
+.practice-card summary { cursor: pointer; font-weight: 600; }
+.practice-card details p { margin-bottom: 0; }
+
+.practice-benefit {
+  color: var(--deep-green) !important;
+}
+
+.asana-library-card > .practice-image {
+  margin: 12px 0;
+  border-radius: 12px;
+}
+
+.video-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  color: var(--deep-green);
+  font-weight: 700;
+}
+
+.video-link:hover { text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  .yoga-breath-ring, .breathe-orb { animation: none; }
+}
+
 .asana-filters {
   align-items: flex-end;
   flex-wrap: wrap;

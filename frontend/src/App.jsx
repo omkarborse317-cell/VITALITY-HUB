@@ -34,6 +34,7 @@ import { NavLink, Navigate, Outlet, Route, Routes, useLocation, useNavigate, use
 import api from './api/axios';
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { QRCodeSVG } from 'qrcode.react';
+import { ASANA_BENEFITS, MEDITATION_PRACTICES, PRANAYAMA_PRACTICES, YOGA_POSES, youtubeSearchUrl } from './wellnessContent';
 
 const NAV_ITEMS = [
   { label: 'Home', path: '/', icon: Home },
@@ -779,7 +780,9 @@ function AsanaLibraryPage() {
             <h3>{asana.name}</h3>
             {asana.sanskrit_name && <p className="asana-sanskrit">{asana.sanskrit_name}</p>}
             <p>{asana.description}</p>
+            <p className="practice-benefit"><strong>Possible benefit:</strong> {ASANA_BENEFITS[asana.name]}</p>
             <p className="small-note">Level: {asana.difficulty.replace('-', ' ')}</p>
+            <img className="practice-image" src="/images/yoga-asana.svg" alt={`Illustration for ${asana.name}`} loading="lazy" />
             <details>
               <summary>Instructions, adaptations, and safety</summary>
               <dl className="asana-guidance">
@@ -791,6 +794,9 @@ function AsanaLibraryPage() {
                 <dt>Safety</dt><dd>{asana.safety_note}</dd>
               </dl>
             </details>
+            <a className="video-link" href={youtubeSearchUrl(`${asana.sanskrit_name || asana.name} gentle beginner yoga instructions`)} target="_blank" rel="noreferrer">
+              Find a guided YouTube video <ArrowRight size={15} />
+            </a>
           </article>
         ))}
       </div>
@@ -801,24 +807,6 @@ function AsanaLibraryPage() {
 
 function YogaPage({ user }) {
   const [activities, setActivities] = useState([]);
-
-  const asanas = [
-    { name: 'Tree Pose', time: '3 min', focus: 'Balance & grounding', pose: 'tree' },
-    { name: 'Cobra Pose', time: '4 min', focus: 'Back opening', pose: 'cobra' },
-    { name: 'Warrior II', time: '5 min', focus: 'Strength & confidence', pose: 'warrior' },
-  ];
-
-  const pranayama = [
-    { name: 'Anulom Vilom', detail: 'Alternate nostril breathing', rhythm: '4-4-6' },
-    { name: 'Kapalabhati', detail: 'Energizing breath reset', rhythm: 'Inhale + Exhale' },
-    { name: 'Bhramari', detail: 'Soothing humming breath', rhythm: 'Calm cycle' },
-  ];
-
-  const meditations = [
-    { name: 'Body Scan', time: '5 minutes', text: 'Release tension from head to toe.' },
-    { name: 'Breath Focus', time: '7 minutes', text: 'Follow the rise and fall of each breath.' },
-    { name: 'Stillness', time: '10 minutes', text: 'Rest in silence and gentle awareness.' },
-  ];
 
   useEffect(() => {
     api.get('/wellness/activities').then((res) => setActivities(res.data));
@@ -843,64 +831,77 @@ function YogaPage({ user }) {
       <div className="wellness-timer-box">
         <Clock3 size={18} />
         <div>
-          <strong>5-Minute Wellness Corner</strong>
-          <p>Take a short pause, breathe gently, and return to the day with calm energy.</p>
+          <strong>Practice gently and at your own pace</strong>
+          <p>Benefits are general educational possibilities, not medical claims. Stop if you feel pain, dizziness, breathlessness, or distress. Video links open YouTube search results so you can choose a guide that suits you.</p>
         </div>
       </div>
 
       <section className="yoga-section">
         <div className="section-heading">
-          <h3>Asanas</h3>
-          <span>Mind-body movement</span>
+          <div><h3>Yoga asanas</h3><p className="small-note">Beginner-friendly poses with simple variations</p></div>
+          <NavLink to="/asanas">Explore all 25 poses</NavLink>
         </div>
-        <div className="asana-grid">
-          {asanas.map((asana) => (
-            <div className="pose-card" key={asana.name}>
-              <div className={`asana-figure ${asana.pose}`}>
-                <div className="head" />
-                <div className="torso" />
-                <div className="arm left" />
-                <div className="arm right" />
-                <div className="leg left" />
-                <div className="leg right" />
+        <div className="practice-grid">
+          {YOGA_POSES.map((asana) => (
+            <article className="practice-card" key={asana.name}>
+              <img className="practice-image" src="/images/yoga-asana.svg" alt={`Illustration for ${asana.name}`} loading="lazy" />
+              <div className="practice-card-body">
+                <span className="mini-pill green">{asana.time} · {asana.focus}</span>
+                <h4>{asana.name}</h4>
+                <p className="asana-sanskrit">{asana.sanskrit}</p>
+                <p><strong>Possible benefit:</strong> {asana.benefit}</p>
+                <details><summary>How to try it</summary><p>{asana.steps}</p></details>
+                <a className="video-link" href={youtubeSearchUrl(`${asana.sanskrit} beginner yoga pose instructions`)} target="_blank" rel="noreferrer">
+                  Find a guided YouTube video <ArrowRight size={15} />
+                </a>
               </div>
-              <h4>{asana.name}</h4>
-              <p>{asana.focus}</p>
-              <small>{asana.time}</small>
-            </div>
+            </article>
           ))}
         </div>
       </section>
 
       <section className="yoga-section">
         <div className="section-heading">
-          <h3>Pranayama</h3>
-          <span>Breath practices</span>
+          <div><h3>Pranayama & breathing</h3><p className="small-note">Gentle practices—no breath holds required</p></div>
         </div>
-        <div className="card-grid three-grid">
-          {pranayama.map((item) => (
-            <div className="info-card pranayama-card" key={item.name}>
-              <div className="breathe-orb"><span>{item.rhythm}</span></div>
-              <h4>{item.name}</h4>
-              <p>{item.detail}</p>
-            </div>
+        <div className="practice-grid">
+          {PRANAYAMA_PRACTICES.map((item) => (
+            <article className="practice-card" key={item.name}>
+              <img className="practice-image" src="/images/pranayama.svg" alt={`Illustration for ${item.name}`} loading="lazy" />
+              <div className="practice-card-body">
+                <span className="mini-pill green">{item.rhythm}</span>
+                <h4>{item.name}</h4>
+                <p>{item.detail}</p>
+                <p><strong>Possible benefit:</strong> {item.benefit}</p>
+                <details><summary>Gentle steps</summary><p>{item.instructions}</p></details>
+                <a className="video-link" href={youtubeSearchUrl(`${item.name} gentle guided breathing practice`)} target="_blank" rel="noreferrer">
+                  Find a guided YouTube video <ArrowRight size={15} />
+                </a>
+              </div>
+            </article>
           ))}
         </div>
       </section>
 
       <section className="yoga-section">
         <div className="section-heading">
-          <h3>Meditation</h3>
-          <span>Stillness & awareness</span>
+          <div><h3>Meditation & mindfulness</h3><p className="small-note">Short, flexible practices for everyday reflection</p></div>
         </div>
-        <div className="card-grid three-grid">
-          {meditations.map((item) => (
-            <div className="info-card meditation-card" key={item.name}>
-              <div className="meditation-icon">◌</div>
-              <h4>{item.name}</h4>
-              <p>{item.text}</p>
-              <small>{item.time}</small>
-            </div>
+        <div className="practice-grid">
+          {MEDITATION_PRACTICES.map((item) => (
+            <article className="practice-card" key={item.name}>
+              <img className="practice-image" src="/images/meditation.svg" alt={`Illustration for ${item.name}`} loading="lazy" />
+              <div className="practice-card-body">
+                <span className="mini-pill green">{item.time}</span>
+                <h4>{item.name}</h4>
+                <p>{item.text}</p>
+                <p><strong>Possible benefit:</strong> {item.benefit}</p>
+                <details><summary>How to try it</summary><p>{item.instructions}</p></details>
+                <a className="video-link" href={youtubeSearchUrl(`${item.name} short guided meditation`)} target="_blank" rel="noreferrer">
+                  Find a guided YouTube video <ArrowRight size={15} />
+                </a>
+              </div>
+            </article>
           ))}
         </div>
       </section>

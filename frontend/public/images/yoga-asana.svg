@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title">
+  <title id="title">Illustration of a person practicing a gentle yoga pose outdoors</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#e8f5ec"/>
+      <stop offset="1" stop-color="#f8e4d6"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#sky)"/>
+  <circle cx="510" cy="84" r="42" fill="#f5c982" opacity=".8"/>
+  <path d="M0 270c110-55 188-17 282-45s191-44 358 28v107H0z" fill="#b8d9b9"/>
+  <path d="M0 302c135-41 219-5 335-27s201-16 305 14v71H0z" fill="#8fb89a"/>
+  <path d="M265 280h140" stroke="#fffaf0" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="331" cy="100" r="21" fill="#704c3d"/>
+  <path d="M317 124c-20 27-21 61-18 88l-69 38m73-38 53 42m-39-124 53 28 52-4m-106-22 10-28m-36 108-48 45m111-47 37 40" fill="none" stroke="#237a57" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M296 210c14 8 29 10 45 6" fill="none" stroke="#174b38" stroke-width="5" stroke-linecap="round"/>
+  <path d="M78 266v-75m0 31c-25-23-41-22-48-18m48 3c19-24 33-29 47-28" fill="none" stroke="#608f69" stroke-width="10" stroke-linecap="round"/>
+  <path d="M555 270v-89m0 41c-23-20-39-18-47-14m47 2c19-23 34-28 48-26" fill="none" stroke="#608f69" stroke-width="10" stroke-linecap="round"/>
+</svg>

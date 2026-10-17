@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title">
+  <title id="title">Illustration of calm breathing with flowing breath lines</title>
+  <defs>
+    <linearGradient id="air" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#e8f5ec"/>
+      <stop offset="1" stop-color="#dbeef3"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#air)"/>
+  <circle cx="320" cy="182" r="113" fill="#fff" opacity=".58"/>
+  <circle cx="320" cy="113" r="31" fill="#704c3d"/>
+  <path d="M258 259c8-77 35-112 62-112s54 35 62 112" fill="#237a57"/>
+  <path d="M273 209c24 19 70 19 94 0" fill="none" stroke="#174b38" stroke-width="7" stroke-linecap="round"/>
+  <path d="M141 141c31-24 61-24 91 0m-100 24c35-27 70-27 105 0m171-24c30-24 60-24 91 0m-96 24c35-27 70-27 105 0" fill="none" stroke="#65a36a" stroke-width="9" stroke-linecap="round" opacity=".78"/>
+  <circle cx="151" cy="258" r="10" fill="#f3bd76"/>
+  <circle cx="489" cy="258" r="10" fill="#f3bd76"/>
+  <path d="M142 289h356" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".8"/>
+</svg>
