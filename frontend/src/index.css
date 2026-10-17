@@ -939,6 +939,54 @@ button { cursor: pointer; }
   background: var(--mint);
 }
 
+.practice-illustration {
+  object-fit: contain;
+}
+
+.illustration-background { fill: #edf7ee; }
+.illustration-sun { fill: #f3bd76; opacity: 0.76; }
+.illustration-hill { fill: #b8d9b9; }
+.illustration-ground { fill: #8fb89a; }
+.illustration-line, .illustration-body {
+  fill: none;
+  stroke: #237a57;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.illustration-body { stroke: #174b38; stroke-width: 10; }
+.illustration-head { fill: #704c3d; stroke: #fffaf0; stroke-width: 2; }
+.illustration-prop { fill: none; stroke: #c89b68; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.illustration-glow { fill: #f5e3bd; opacity: 0.8; }
+.illustration-accent, .illustration-flow { fill: none; stroke: #528b69; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.illustration-flow { stroke-width: 4; }
+.illustration-face { fill: none; stroke: #704c3d; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.illustration-heart { fill: #d8897b; stroke: #b96864; stroke-width: 3; stroke-linejoin: round; }
+.illustration-eye { fill: #fffaf0; stroke: #528b69; stroke-width: 4; }
+.illustration-foot { fill: #d8897b; stroke: #b96864; stroke-width: 2; }
+
+.practice-illustration.art-child .illustration-body,
+.practice-illustration.art-cat .illustration-body,
+.practice-illustration.art-cow .illustration-body,
+.practice-illustration.art-cat-cow .illustration-body,
+.practice-illustration.art-down-dog .illustration-body,
+.practice-illustration.art-cobra .illustration-body,
+.practice-illustration.art-bridge .illustration-body,
+.practice-illustration.art-seated-fold .illustration-body,
+.practice-illustration.art-plank .illustration-body,
+.practice-illustration.art-knees-to-chest .illustration-body,
+.practice-illustration.art-rest .illustration-body,
+.practice-illustration.art-supported-rest .illustration-body {
+  stroke: #7b644f;
+}
+
+.practice-illustration.art-warrior-one .illustration-body,
+.practice-illustration.art-warrior-two .illustration-body,
+.practice-illustration.art-triangle .illustration-body,
+.practice-illustration.art-lunge .illustration-body {
+  stroke: #8c5f49;
+}
+
 .practice-card-body { padding: 17px; }
 .practice-card h4 { margin: 8px 0; font-size: 1.15rem; }
 .practice-card p { color: var(--muted); line-height: 1.55; }

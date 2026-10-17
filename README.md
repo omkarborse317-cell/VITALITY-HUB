@@ -101,4 +101,4 @@ Personalization is rules-based and uses only a signed-in user's selected wellnes
 
 The asana catalog is seeded idempotently at backend startup into its own table. It currently provides 25 beginner-oriented poses through the public `GET /api/asanas` search/filter endpoint and `GET /api/asanas/{id}` detail endpoint.
 
-The `/yoga` page includes 12 featured asanas, 8 breathing practices, and 8 meditation ideas with local SVG illustrations. Practice video links open YouTube search results for the named activity; specific videos are not curated or endorsed by the application.
+The `/yoga` page includes 12 featured asanas, 8 breathing practices, and 8 meditation ideas. Each practice uses a distinct, accessible vector illustration selected by its exact name, including pose-specific body positions. The `/asanas` cards use the same name-matched pose art for the complete library. Practice video links open YouTube search results for the named activity; specific videos are not curated or endorsed by the application.

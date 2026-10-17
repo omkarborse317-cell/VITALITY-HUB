@@ -35,6 +35,7 @@ import api from './api/axios';
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { QRCodeSVG } from 'qrcode.react';
 import { ASANA_BENEFITS, MEDITATION_PRACTICES, PRANAYAMA_PRACTICES, YOGA_POSES, youtubeSearchUrl } from './wellnessContent';
+import PracticeIllustration from './PracticeIllustration';
 
 const NAV_ITEMS = [
   { label: 'Home', path: '/', icon: Home },
@@ -782,7 +783,7 @@ function AsanaLibraryPage() {
             <p>{asana.description}</p>
             <p className="practice-benefit"><strong>Possible benefit:</strong> {ASANA_BENEFITS[asana.name]}</p>
             <p className="small-note">Level: {asana.difficulty.replace('-', ' ')}</p>
-            <img className="practice-image" src="/images/yoga-asana.svg" alt={`Illustration for ${asana.name}`} loading="lazy" />
+            <PracticeIllustration name={asana.name} type="asana" />
             <details>
               <summary>Instructions, adaptations, and safety</summary>
               <dl className="asana-guidance">
@@ -844,7 +845,7 @@ function YogaPage({ user }) {
         <div className="practice-grid">
           {YOGA_POSES.map((asana) => (
             <article className="practice-card" key={asana.name}>
-              <img className="practice-image" src="/images/yoga-asana.svg" alt={`Illustration for ${asana.name}`} loading="lazy" />
+              <PracticeIllustration name={asana.name} type="asana" />
               <div className="practice-card-body">
                 <span className="mini-pill green">{asana.time} · {asana.focus}</span>
                 <h4>{asana.name}</h4>
@@ -867,7 +868,7 @@ function YogaPage({ user }) {
         <div className="practice-grid">
           {PRANAYAMA_PRACTICES.map((item) => (
             <article className="practice-card" key={item.name}>
-              <img className="practice-image" src="/images/pranayama.svg" alt={`Illustration for ${item.name}`} loading="lazy" />
+              <PracticeIllustration name={item.name} type="pranayama" />
               <div className="practice-card-body">
                 <span className="mini-pill green">{item.rhythm}</span>
                 <h4>{item.name}</h4>
@@ -890,7 +891,7 @@ function YogaPage({ user }) {
         <div className="practice-grid">
           {MEDITATION_PRACTICES.map((item) => (
             <article className="practice-card" key={item.name}>
-              <img className="practice-image" src="/images/meditation.svg" alt={`Illustration for ${item.name}`} loading="lazy" />
+              <PracticeIllustration name={item.name} type="meditation" />
               <div className="practice-card-body">
                 <span className="mini-pill green">{item.time}</span>
                 <h4>{item.name}</h4>
