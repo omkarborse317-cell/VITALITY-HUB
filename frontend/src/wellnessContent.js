@@ -259,3 +259,50 @@ export const MEDITATION_PRACTICES = [
 export function youtubeSearchUrl(query) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
 }
+
+export const WELLNESS_TOPIC_GUIDES = {
+  movement: {
+    title: 'Move in a way that feels good',
+    benefit: 'Regular, comfortable movement can support mobility, strength, and everyday energy. Choose an option that suits your current ability.',
+    image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=900&q=80',
+    imageAlt: 'Person practicing a gentle movement routine outdoors',
+    videoQuery: 'beginner gentle movement and stretching routine safe form',
+  },
+  nutrition: {
+    title: 'Build balanced everyday meals',
+    benefit: 'A varied mix of foods can make meals more satisfying and provide a range of nutrients. Preferences, culture, budget, and access all matter.',
+    image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=80',
+    imageAlt: 'Colorful balanced meal with vegetables and grains',
+    videoQuery: 'balanced healthy plate nutrition education beginner',
+  },
+  hydration: {
+    title: 'Find a hydration rhythm that works for you',
+    benefit: 'Keeping water within reach can make it easier to drink when thirsty. Needs vary with activity, climate, and individual health.',
+    image: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=900&q=80',
+    imageAlt: 'Clear drinking water in a glass',
+    videoQuery: 'everyday hydration basics health education',
+  },
+  sleep: {
+    title: 'Create a calmer wind-down',
+    benefit: 'A repeatable wind-down routine and a comfortable sleep environment can support a more consistent rest schedule.',
+    image: 'https://images.unsplash.com/photo-1511295742362-4bfc8e55b2f2?auto=format&fit=crop&w=900&q=80',
+    imageAlt: 'Calm, softly lit bedroom prepared for rest',
+    videoQuery: 'sleep hygiene relaxing bedtime routine education',
+  },
+  mindfulness: {
+    title: 'Make room for a mindful pause',
+    benefit: 'A brief grounding or mindfulness practice can offer a simple way to pause and notice the present moment.',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=80',
+    imageAlt: 'Person sitting quietly outdoors for meditation',
+    videoQuery: 'short guided mindfulness grounding practice beginner',
+  },
+};
+
+export function wellnessGuideForCategory(category = '') {
+  const normalized = category.toLowerCase();
+  if (/food|nutrition|meal/.test(normalized)) return WELLNESS_TOPIC_GUIDES.nutrition;
+  if (/water|hydrat/.test(normalized)) return WELLNESS_TOPIC_GUIDES.hydration;
+  if (/sleep|rest/.test(normalized)) return WELLNESS_TOPIC_GUIDES.sleep;
+  if (/mind|breath|stress|relax/.test(normalized)) return WELLNESS_TOPIC_GUIDES.mindfulness;
+  return WELLNESS_TOPIC_GUIDES.movement;
+}

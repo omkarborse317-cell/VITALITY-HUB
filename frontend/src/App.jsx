@@ -34,7 +34,7 @@ import { NavLink, Navigate, Outlet, Route, Routes, useLocation, useNavigate, use
 import api from './api/axios';
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { QRCodeSVG } from 'qrcode.react';
-import { ASANA_BENEFITS, MEDITATION_PRACTICES, PRANAYAMA_PRACTICES, YOGA_POSES, youtubeSearchUrl } from './wellnessContent';
+import { ASANA_BENEFITS, MEDITATION_PRACTICES, PRANAYAMA_PRACTICES, WELLNESS_TOPIC_GUIDES, YOGA_POSES, wellnessGuideForCategory, youtubeSearchUrl } from './wellnessContent';
 import PracticeIllustration from './PracticeIllustration';
 
 const NAV_ITEMS = [
@@ -65,6 +65,38 @@ const moods = [
 ];
 
 const barColors = ['#237A57', '#2E8B57', '#65A36A', '#83C6A5', '#F8E4D6'];
+
+function TopicGuideCard({ guide, title = guide.title }) {
+  return (
+    <article className="topic-guide-card">
+      <img src={guide.image} alt={guide.imageAlt} loading="lazy" />
+      <div className="topic-guide-copy">
+        <h3>{title}</h3>
+        <p><strong>How it may help:</strong> {guide.benefit}</p>
+        <a className="video-link" href={youtubeSearchUrl(guide.videoQuery)} target="_blank" rel="noreferrer">
+          Explore a related YouTube guide <ArrowRight size={15} />
+        </a>
+      </div>
+    </article>
+  );
+}
+
+function foodImageForCategory(category = '') {
+  const normalized = category.toLowerCase();
+  if (normalized.includes('fruit')) {
+    return 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=700&q=80';
+  }
+  if (normalized.includes('vegetable')) {
+    return 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=700&q=80';
+  }
+  if (normalized.includes('grain')) {
+    return 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=700&q=80';
+  }
+  if (normalized.includes('protein')) {
+    return 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=700&q=80';
+  }
+  return WELLNESS_TOPIC_GUIDES.nutrition.image;
+}
 
 function ProtectedRoute({ user, children }) {
   if (!user) {
@@ -659,6 +691,7 @@ function ExercisePage() {
   return (
     <div className="section-page">
       <h2>Exercise and movement</h2>
+      <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.movement} />
       <div className="toolbar-row">
         <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search exercises" />
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -673,14 +706,18 @@ function ExercisePage() {
       <div className="card-grid three-grid">
         {exercises.map((item) => (
           <div className="info-card" key={item.id}>
+            <img className="wellness-item-image" src={wellnessGuideForCategory(item.category).image} alt={`${item.category} activity`} loading="lazy" />
             <h3>{item.name}</h3>
-            <p>{item.description}</p>
+            <p><strong>How it may help:</strong> {item.description}</p>
             <ul className="tiny-list">
               <li>Difficulty: {item.difficulty}</li>
               <li>Duration: {item.duration}</li>
               <li>Equipment: {item.equipment || 'None'}</li>
             </ul>
             <div className="mini-pill green">{item.category}</div>
+            <a className="video-link" href={youtubeSearchUrl(`${item.name} ${item.category} beginner safe form`)} target="_blank" rel="noreferrer">
+              Find a video for this activity <ArrowRight size={15} />
+            </a>
           </div>
         ))}
       </div>
@@ -1064,15 +1101,19 @@ function RecommendationsPage() {
       <div className="recommendation-grid">
         {recommendations?.items.map((item) => (
           <article className="info-card recommendation-card" key={item.id}>
+            <img className="wellness-item-image" src={wellnessGuideForCategory(item.category).image} alt={`${item.category} wellness activity`} loading="lazy" />
             <div className="mini-pill green">{item.category} · {item.duration}</div>
             <h3>{item.name}</h3>
-            <p>{item.description}</p>
+            <p><strong>How it may help:</strong> {item.description}</p>
             <p className="recommendation-reason"><Sparkles size={15} /> {item.reason}</p>
             <details>
               <summary>Practice guidance</summary>
               <p>{item.instructions}</p>
               {item.safety_note && <p className="small-note">Safety: {item.safety_note}</p>}
             </details>
+            <a className="video-link" href={youtubeSearchUrl(`${item.name} ${item.category} gentle guided practice beginner`)} target="_blank" rel="noreferrer">
+              Find a video for this activity <ArrowRight size={15} />
+            </a>
           </article>
         ))}
       </div>
@@ -1093,15 +1134,21 @@ function FoodPage() {
   return (
     <div className="section-page">
       <h2>Healthy food explorer</h2>
+      <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.nutrition} />
       <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search food" />
       <div className="card-grid three-grid">
         {foods.map((item) => (
           <div className="info-card" key={item.id}>
+            <img className="wellness-item-image" src={foodImageForCategory(item.category)} alt={`${item.category} food`} loading="lazy" />
             <h3>{item.name}</h3>
             <p>{item.description}</p>
             <div className="chip-row"><span className="mini-pill green">{item.category}</span></div>
+            {item.nutrition && <p><strong>Nutrition note:</strong> {item.nutrition}</p>}
             <p><strong>Serving:</strong> {item.serving}</p>
             <p><strong>Pairing:</strong> {item.pairings}</p>
+            <a className="video-link" href={youtubeSearchUrl(`${item.name} nutrition healthy eating education`)} target="_blank" rel="noreferrer">
+              Learn about this food <ArrowRight size={15} />
+            </a>
           </div>
         ))}
       </div>
@@ -1113,6 +1160,7 @@ function PlatePage() {
   return (
     <div className="section-page">
       <h2>Interactive healthy plate</h2>
+      <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.nutrition} />
       <div className="plate-wrap">
         <div className="plate">
           <div className="plate-section veg">Vegetables<br />& Fruits</div>
@@ -1146,6 +1194,7 @@ function WaterPage() {
   return (
     <div className="section-page">
       <h2>Your Water Tracker</h2>
+      <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.hydration} />
       <div className="water-box">
         <div>
           <strong>{today.total_ml} / {today.target_ml} mL</strong>
@@ -1194,6 +1243,7 @@ function SleepPage() {
   return (
     <div className="section-page">
       <h2>Sleep tracker</h2>
+      <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.sleep} />
       <form onSubmit={save} className="stack-form">
         <div className="row-fields">
           <label>Bedtime<input type="time" value={form.bedtime} onChange={(e) => setForm({ ...form, bedtime: e.target.value })} /></label>
@@ -1238,6 +1288,7 @@ function MoodPage() {
   return (
     <div className="section-page">
       <h2>How are you feeling today?</h2>
+      <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.mindfulness} title="Choose a gentle practice for how you feel" />
       <div className="mood-row">
         {moods.map((item) => (
           <button key={item.value} className={mood === item.value ? 'mood-btn active' : 'mood-btn'} onClick={() => setMood(item.value)}>
@@ -1246,6 +1297,9 @@ function MoodPage() {
         ))}
       </div>
       <button className="primary-btn" onClick={saveMood}>Save mood check-in</button>
+      <a className="video-link mood-video-link" href={youtubeSearchUrl(`${mood.toLowerCase()} mood gentle mindfulness grounding practice`)} target="_blank" rel="noreferrer">
+        Explore a gentle practice for feeling {mood.toLowerCase()} <ArrowRight size={15} />
+      </a>
       <div className="history-list">
         {history.map((entry) => (
           <div key={entry.id} className="history-item">{entry.mood} — {new Date(entry.created_at).toLocaleDateString()}</div>
