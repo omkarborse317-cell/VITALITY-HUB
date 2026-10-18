@@ -941,6 +941,33 @@ button { cursor: pointer; }
 .topic-guide-copy h3 { margin: 0 0 8px; }
 .topic-guide-copy p { color: var(--muted); line-height: 1.55; }
 
+.topic-tips { margin: 18px 0; }
+.topic-tips h3 { margin-bottom: 12px; }
+
+.topic-tip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 12px;
+}
+
+.topic-tip-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--white);
+}
+
+.topic-tip-card img {
+  display: block;
+  width: 100%;
+  height: 115px;
+  object-fit: cover;
+}
+
+.topic-tip-card > div { padding: 12px; }
+.topic-tip-card p { color: var(--muted); line-height: 1.5; }
+.topic-tip-card .video-link { font-size: 0.9rem; }
+
 .wellness-item-image {
   display: block;
   width: 100%;
@@ -1061,6 +1088,7 @@ button { cursor: pointer; }
   .topic-guide-card { grid-template-columns: 1fr; }
   .topic-guide-card > img { height: 190px; min-height: 0; }
   .topic-guide-copy { padding: 18px; }
+  .topic-tip-grid { grid-template-columns: 1fr; }
 }
 
 .asana-filters {

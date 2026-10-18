@@ -261,6 +261,13 @@ export function youtubeSearchUrl(query) {
 }
 
 export const WELLNESS_TOPIC_GUIDES = {
+  routine: {
+    title: 'Build a daily routine one small step at a time',
+    benefit: 'A flexible routine can make everyday habits easier to remember while leaving room for changing energy, schedules, and needs.',
+    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=900&q=80',
+    imageAlt: 'Notebook and cup of tea ready for planning a daily routine',
+    videoQuery: 'simple realistic daily wellness routine habits beginner',
+  },
   movement: {
     title: 'Move in a way that feels good',
     benefit: 'Regular, comfortable movement can support mobility, strength, and everyday energy. Choose an option that suits your current ability.',
@@ -296,6 +303,24 @@ export const WELLNESS_TOPIC_GUIDES = {
     imageAlt: 'Person sitting quietly outdoors for meditation',
     videoQuery: 'short guided mindfulness grounding practice beginner',
   },
+};
+
+export const WELLNESS_TIPS = {
+  routine: [
+    'Pick one small action to anchor to a habit you already do.',
+    'Keep the plan flexible; a shorter version still counts.',
+    'Review what worked and adjust without aiming for perfection.',
+  ],
+  hydration: [
+    'Keep water somewhere convenient and sip when thirsty.',
+    'Include water breaks in existing pauses, such as meals or study breaks.',
+    'Adjust to your activity, surroundings, and individual health needs.',
+  ],
+  sleep: [
+    'Try a wind-down activity that feels calming and repeatable.',
+    'Make the room as comfortable, quiet, and dark as you reasonably can.',
+    'A consistent sleep and wake schedule may help create a steadier rhythm.',
+  ],
 };
 
 export function wellnessGuideForCategory(category = '') {

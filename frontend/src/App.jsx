@@ -34,7 +34,7 @@ import { NavLink, Navigate, Outlet, Route, Routes, useLocation, useNavigate, use
 import api from './api/axios';
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { QRCodeSVG } from 'qrcode.react';
-import { ASANA_BENEFITS, MEDITATION_PRACTICES, PRANAYAMA_PRACTICES, WELLNESS_TOPIC_GUIDES, YOGA_POSES, wellnessGuideForCategory, youtubeSearchUrl } from './wellnessContent';
+import { ASANA_BENEFITS, MEDITATION_PRACTICES, PRANAYAMA_PRACTICES, WELLNESS_TIPS, WELLNESS_TOPIC_GUIDES, YOGA_POSES, wellnessGuideForCategory, youtubeSearchUrl } from './wellnessContent';
 import PracticeIllustration from './PracticeIllustration';
 
 const NAV_ITEMS = [
@@ -78,6 +78,28 @@ function TopicGuideCard({ guide, title = guide.title }) {
         </a>
       </div>
     </article>
+  );
+}
+
+function TopicTips({ topic, heading }) {
+  const guide = WELLNESS_TOPIC_GUIDES[topic];
+  return (
+    <section className="topic-tips">
+      <h3>{heading}</h3>
+      <div className="topic-tip-grid">
+        {WELLNESS_TIPS[topic].map((tip) => (
+          <article className="topic-tip-card" key={tip}>
+            <img src={guide.image} alt={guide.imageAlt} loading="lazy" />
+            <div>
+              <p>{tip}</p>
+              <a className="video-link" href={youtubeSearchUrl(`${tip} ${guide.title} wellness tips`)} target="_blank" rel="noreferrer">
+                Watch a related tip <ArrowRight size={15} />
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -306,15 +328,11 @@ function HomePage() {
         <p>Vitality Hub helps people learn about physical activity, balanced nutrition, sleep, hydration, mindfulness, and consistent daily routines in a supportive, community-minded way.</p>
       </section>
 
+      <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.routine} />
       <section className="split-layout">
         <div>
           <h3>Simple daily wellness routine</h3>
-          <ul className="check-list">
-            <li>Drink water in the morning and keep a bottle nearby.</li>
-            <li>Take a short movement break or walk during the day.</li>
-            <li>Eat balanced meals with fruits, vegetables, protein, and grains.</li>
-            <li>Build an evening routine for calmer rest and sleep.</li>
-          </ul>
+          <TopicTips topic="routine" heading="Small routine-building tips" />
         </div>
         <div>
           <h3>Awareness campaign</h3>
@@ -952,12 +970,16 @@ function YogaPage({ user }) {
         <div className="card-grid three-grid">
           {activities.map((item) => (
             <div className="info-card" key={item.id || item.name}>
+              <img className="wellness-item-image" src={wellnessGuideForCategory(item.category).image} alt={`${item.category} activity`} loading="lazy" />
               <h3>{item.name}</h3>
-              <p>{item.description}</p>
+              <p><strong>How it may help:</strong> {item.description}</p>
               <ul className="tiny-list">
                 <li>{item.duration}</li>
                 <li>{item.category}</li>
               </ul>
+              <a className="video-link" href={youtubeSearchUrl(`${item.name} ${item.category} gentle guided routine`)} target="_blank" rel="noreferrer">
+                Find a video for this activity <ArrowRight size={15} />
+              </a>
             </div>
           ))}
         </div>
@@ -1195,6 +1217,7 @@ function WaterPage() {
     <div className="section-page">
       <h2>Your Water Tracker</h2>
       <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.hydration} />
+      <TopicTips topic="hydration" heading="Everyday hydration tips" />
       <div className="water-box">
         <div>
           <strong>{today.total_ml} / {today.target_ml} mL</strong>
@@ -1244,6 +1267,7 @@ function SleepPage() {
     <div className="section-page">
       <h2>Sleep tracker</h2>
       <TopicGuideCard guide={WELLNESS_TOPIC_GUIDES.sleep} />
+      <TopicTips topic="sleep" heading="Gentle sleep routine tips" />
       <form onSubmit={save} className="stack-form">
         <div className="row-fields">
           <label>Bedtime<input type="time" value={form.bedtime} onChange={(e) => setForm({ ...form, bedtime: e.target.value })} /></label>
